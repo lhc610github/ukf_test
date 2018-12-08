@@ -35,9 +35,10 @@ int main(int argc, char** argv) {
     ros::NodeHandle node("~");
     std::cout << "hello" << std::endl;
     Filter_predict_part<T, S_, C_, SM_, VMeas_, VM_ > filter_core(node);
-    ros::AsyncSpinner spinner(3);
-    spinner.start();
-    ros::waitForShutdown();
-    spinner.stop();
+    // ros::AsyncSpinner spinner(3);
+    // spinner.start();
+    // ros::waitForShutdown();
+    // spinner.stop();
+    ros::spin();
     return 0;
 }
