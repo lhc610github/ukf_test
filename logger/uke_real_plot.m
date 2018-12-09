@@ -9,21 +9,21 @@ figure(1)
 subplot(3,1,1)
 plot(t_p, real_p.phi,'.-');
 hold on
-plot(t_u, real_u.phi,'.-');
+plot(t_u, real_u.phi,'r.-');
 legend('ukf','vio');
 title('phi')
 hold off
 subplot(3,1,2)
 plot(t_p, real_p.theta,'.-');
 hold on
-plot(t_u, real_u.theta,'.-');
+plot(t_u, real_u.theta,'r.-');
 legend('ukf','vio');
 title('theta')
 hold off
 subplot(3,1,3)
 plot(t_p, real_p.psi,'.-');
 hold on
-plot(t_u, real_u.psi,'.-');
+plot(t_u, real_u.psi,'r.-');
 legend('ukf','vio');
 title('psi')
 hold off
@@ -32,21 +32,21 @@ figure(2)
 subplot(3,1,1)
 plot(t_p, real_p.vx,'.-');
 hold on
-plot(t_u, real_u.vx,'.-');
+plot(t_u, real_u.vx,'r.-');
 legend('ukf','vio');
 title('vx')
 hold off
 subplot(3,1,2)
 plot(t_p, real_p.vy,'.-');
 hold on
-plot(t_u, real_u.vy,'.-');
+plot(t_u, real_u.vy,'r.-');
 legend('ukf','vio');
 title('vy')
 hold off
 subplot(3,1,3)
 plot(t_p, real_p.vz,'.-');
 hold on
-plot(t_u, real_u.vz,'.-');
+plot(t_u, real_u.vz,'r.-');
 legend('ukf','vio');
 title('vz')
 hold off
@@ -55,7 +55,7 @@ figure(3)
 subplot(3,1,1)
 plot(t_p, real_p.x,'.-');
 hold on
-plot(t_u, real_u.x,'.-');
+plot(t_u, real_u.x,'r.-');
 legend('ukf','vio');
 title('x')
 hold off
@@ -63,13 +63,13 @@ subplot(3,1,2)
 plot(t_p, real_p.y,'.-');
 title('y')
 hold on
-plot(t_u, real_u.y,'.-');
+plot(t_u, real_u.y,'r.-');
 legend('ukf','vio');
 hold off
 subplot(3,1,3)
 plot(t_p, real_p.z,'.-');
 hold on
-plot(t_u, real_u.z,'.-');
+plot(t_u, real_u.z,'r.-');
 legend('ukf','vio');
 title('z')
 hold off

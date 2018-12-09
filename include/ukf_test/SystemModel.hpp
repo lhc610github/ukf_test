@@ -26,29 +26,29 @@ class State : public Kalman::Vector<T, 15> {
         static constexpr size_t VY = 4;
         //! Z-velocity
         static constexpr size_t VZ = 5;
-        static constexpr size_t AX = 6;
-        static constexpr size_t AY = 7;
-        static constexpr size_t AZ = 8;
+        // static constexpr size_t AX = 6;
+        // static constexpr size_t AY = 7;
+        // static constexpr size_t AZ = 8;
         //! W-orientation
         // static constexpr size_t QW = 6;
         //! X-orientation
-        static constexpr size_t QX = 9;
+        static constexpr size_t QX = 6;
         //! Y-orientation
-        static constexpr size_t QY = 10;
+        static constexpr size_t QY = 7;
         //! Z-orientation
-        static constexpr size_t QZ = 11;
-         static constexpr size_t WX = 12;
-        //! Y-orientation
-        static constexpr size_t WY = 13;
-        //! Z-orientation
-        static constexpr size_t WZ = 14;       //! accelerator bias
-        // static constexpr size_t baX = 12;
-        // static constexpr size_t baY = 13;
-        // static constexpr size_t baZ = 14;
+        static constexpr size_t QZ = 8;
+        //  static constexpr size_t WX = 12;
+        // //! Y-orientation
+        // static constexpr size_t WY = 13;
+        // //! Z-orientation
+        // static constexpr size_t WZ = 14;       //! accelerator bias
+        static constexpr size_t baX = 9;
+        static constexpr size_t baY = 10;
+        static constexpr size_t baZ = 11;
         // //! gyro bias
-        // static constexpr size_t bwX = 15;
-        // static constexpr size_t bwY = 16;
-        // static constexpr size_t bwZ = 17;
+        static constexpr size_t bwX = 12;
+        static constexpr size_t bwY = 13;
+        static constexpr size_t bwZ = 14;
         
         T x()        const { return (*this)[ X ]; }
         T y()        const { return (*this)[ Y ]; }
@@ -56,22 +56,22 @@ class State : public Kalman::Vector<T, 15> {
         T vx()       const { return (*this)[ VX ]; }
         T vy()       const { return (*this)[ VY ]; }
         T vz()       const { return (*this)[ VZ ]; }
-        T ax()       const { return (*this)[ AX ]; }
-        T ay()       const { return (*this)[ AY ]; }
-        T az()       const { return (*this)[ AZ ]; }
+        // T ax()       const { return (*this)[ AX ]; }
+        // T ay()       const { return (*this)[ AY ]; }
+        // T az()       const { return (*this)[ AZ ]; }
         // T qw()       const { return (*this)[ QW ]; }
         T qx()       const { return (*this)[ QX ]; }
         T qy()       const { return (*this)[ QY ]; }
         T qz()       const { return (*this)[ QZ ]; }
-        T wx()       const { return (*this)[ WX ]; }
-        T wy()       const { return (*this)[ WY ]; }
-        T wz()       const { return (*this)[ WZ ]; }
-        // T bax()      const { return (*this)[ baX ]; }
-        // T bay()      const { return (*this)[ baY ]; }
-        // T baz()      const { return (*this)[ baZ ]; }
-        // T bwx()      const { return (*this)[ bwX ]; }
-        // T bwy()      const { return (*this)[ bwY ]; }
-        // T bwz()      const { return (*this)[ bwZ ]; }
+        // T wx()       const { return (*this)[ WX ]; }
+        // T wy()       const { return (*this)[ WY ]; }
+        // T wz()       const { return (*this)[ WZ ]; }
+        T bax()      const { return (*this)[ baX ]; }
+        T bay()      const { return (*this)[ baY ]; }
+        T baz()      const { return (*this)[ baZ ]; }
+        T bwx()      const { return (*this)[ bwX ]; }
+        T bwy()      const { return (*this)[ bwY ]; }
+        T bwz()      const { return (*this)[ bwZ ]; }
 
         T& x()        { return (*this)[ X ]; }
         T& y()        { return (*this)[ Y ]; }
@@ -79,22 +79,22 @@ class State : public Kalman::Vector<T, 15> {
         T& vx()       { return (*this)[ VX ]; }
         T& vy()       { return (*this)[ VY ]; }
         T& vz()       { return (*this)[ VZ ]; }
-        T& ax()       { return (*this)[ AX ]; }
-        T& ay()       { return (*this)[ AY ]; }
-        T& az()       { return (*this)[ AZ ]; }
+        // T& ax()       { return (*this)[ AX ]; }
+        // T& ay()       { return (*this)[ AY ]; }
+        // T& az()       { return (*this)[ AZ ]; }
         // T& qw()       { return (*this)[ QW ]; }
         T& qx()       { return (*this)[ QX ]; }
         T& qy()       { return (*this)[ QY ]; }
         T& qz()       { return (*this)[ QZ ]; }
-        T& wx()       { return (*this)[ WX ]; }
-        T& wy()       { return (*this)[ WY ]; }
-        T& wz()       { return (*this)[ WZ ]; }
-        // T& bax()      { return (*this)[ baX ]; }
-        // T& bay()      { return (*this)[ baY ]; }
-        // T& baz()      { return (*this)[ baZ ]; }
-        // T& bwx()      { return (*this)[ bwX ]; }
-        // T& bwy()      { return (*this)[ bwY ]; }
-        // T& bwz()      { return (*this)[ bwZ ]; }
+        // T& wx()       { return (*this)[ WX ]; }
+        // T& wy()       { return (*this)[ WY ]; }
+        // T& wz()       { return (*this)[ WZ ]; }
+        T& bax()      { return (*this)[ baX ]; }
+        T& bay()      { return (*this)[ baY ]; }
+        T& baz()      { return (*this)[ baZ ]; }
+        T& bwx()      { return (*this)[ bwX ]; }
+        T& bwy()      { return (*this)[ bwY ]; }
+        T& bwz()      { return (*this)[ bwZ ]; }
 };
 
 
@@ -112,6 +112,14 @@ class Control : public Kalman::Vector<T, 7> {
         static constexpr size_t wY = 4;
         static constexpr size_t wZ = 5;
 
+        // static constexpr size_t baX = 6;
+        // static constexpr size_t baY = 7;
+        // static constexpr size_t baZ = 8;
+
+        // static constexpr size_t bwX = 9;
+        // static constexpr size_t bwY = 10;
+        // static constexpr size_t bwZ = 11;
+
         static constexpr size_t DT = 6;
 
         T ax()      const { return (*this)[ aX ]; }
@@ -120,6 +128,12 @@ class Control : public Kalman::Vector<T, 7> {
         T wx()      const { return (*this)[ wX ]; }
         T wy()      const { return (*this)[ wY ]; }
         T wz()      const { return (*this)[ wZ ]; }
+        // T bax()      const { return (*this)[ baX ]; }
+        // T bay()      const { return (*this)[ baY ]; }
+        // T baz()      const { return (*this)[ baZ ]; }
+        // T bwx()      const { return (*this)[ bwX ]; }
+        // T bwy()      const { return (*this)[ bwY ]; }
+        // T bwz()      const { return (*this)[ bwZ ]; }
         T dt()      const { return (*this)[ DT ]; }
 
         T& ax()      { return (*this)[ aX ]; }
@@ -128,6 +142,12 @@ class Control : public Kalman::Vector<T, 7> {
         T& wx()      { return (*this)[ wX ]; }
         T& wy()      { return (*this)[ wY ]; }
         T& wz()      { return (*this)[ wZ ]; }
+        // T& bax()      { return (*this)[ baX ]; }
+        // T& bay()      { return (*this)[ baY ]; }
+        // T& baz()      { return (*this)[ baZ ]; }
+        // T& bwx()      { return (*this)[ bwX ]; }
+        // T& bwy()      { return (*this)[ bwY ]; }
+        // T& bwz()      { return (*this)[ bwZ ]; }
         T& dt()      { return (*this)[ DT ]; }
 
 };
@@ -138,14 +158,54 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
         typedef Test1::State<T> S;
         typedef Test1::Control<T> C;
 
+        SystemModel() {
+            // Covariance<StateType> _temp_P;
+            // _temp_P.setIdentity();
+            // _temp_P(0,0) = T(0.5);
+            // _temp_P(1,1) = T(0.5);
+            // _temp_P(2,2) = T(0.5);
+            // _temp_P(3,3) = T(1.0);
+            // _temp_P(4,4) = T(1.0);
+            // _temp_P(5,5) = T(1.0);
+            // _temp_P(6,6) = T(2.0);
+            // _temp_P(7,7) = T(2.0);
+            // _temp_P(8,8) = T(2.0);
+            // _temp_P(9,9) = T(2.0);
+            // _temp_P(10,10) = T(2.0);
+            // _temp_P(11,11) = T(2.0);
+            // setCovariance(_temp_P);
+            this->P(0,0) = T(0.5);
+            this->P(1,1) = T(0.5);
+            this->P(2,2) = T(0.5);
+            this->P(3,3) = T(1.0);
+            this->P(4,4) = T(1.0);
+            this->P(5,5) = T(1.0);
+            this->P(6,6) = T(1.0);
+            this->P(7,7) = T(2.0);
+            this->P(8,8) = T(2.0);
+            this->P(9,9) = T(2.0);
+            this->P(10,10) = T(2.0);
+            this->P(11,11) = T(2.0);
+        }
+        
+        mutable T ax_out;
+        mutable T ay_out;
+        mutable T az_out;
+        mutable T wx_out;
+        mutable T wy_out;
+        mutable T wz_out;
+
         S f(const S& x, const C& u) const {
             S x_;
             // T ax = u.ax() - x.bax();
             // T ay = u.ay() - x.bay();
             // T az = u.az() - x.baz();
-            T ax = -u.ax();// - x.bax();
-            T ay = -u.ay();// - x.bay();
-            T az = -u.az();// - x.baz();
+            T ax = -u.ax() - x.bax();
+            T ay = -u.ay() - x.bay();
+            T az = -u.az() - x.baz();
+            // T ax = -u.ax();
+            // T ay = -u.ay();
+            // T az = -u.az();
 
 
 
@@ -169,9 +229,15 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             T ga_x = R_(0, 0) * ax + R_(0, 1) * ay + R_(0, 2) * az;
             T ga_y = R_(1, 0) * ax + R_(1, 1) * ay + R_(1, 2) * az;
             T ga_z = R_(2, 0) * ax + R_(2, 1) * ay + R_(2, 2) * az + T(ONE_G);
-            x_.ax() = ga_x;
-            x_.ay() = ga_y;
-            x_.az() = ga_z;
+            ax_out = ga_x;
+            ay_out = ga_y;
+            az_out = ga_z;
+            // ax_out = const_cast<T*>(&ga_x);
+            // ay_out = const_cast<T*>(&ga_y);
+            // az_out = const_cast<T*>(&ga_z);
+            // x_.ax() = ga_x;
+            // x_.ay() = ga_y;
+            // x_.az() = ga_z;
             // std::cout << "ba "<< x.bax() <<","<< x.bay() <<","<< x.baz() << std::endl;
             // std::cout << "q  "<< a <<","<< b <<","<< c <<","<<d<< std::endl;
             // std::cout << "ga "<< ga_x <<","<< ga_y <<","<< ga_z << std::endl;
@@ -187,6 +253,10 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             T wx_new = u.wx();
             T wy_new = u.wy();
             T wz_new = u.wz();
+
+            wx_out = wx_new;
+            wy_out = wy_new;
+            wz_out = wz_new;
 
             // Kalman::SquareMatrix<T, 3> R_new;
             Eigen::Matrix3d R_new;
@@ -291,9 +361,9 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             x_.qx() = new_e(0)/T(M_PI)*T(180);//q_new(1);
             x_.qy() = new_e(1)/T(M_PI)*T(180);//q_new(1);
             x_.qz() = new_e(2)/T(M_PI)*T(180);//q_new(1);
-            x_.wx() = u.wx();
-            x_.wy() = u.wy();
-            x_.wz() = u.wz();
+            // x_.wx() = u.wx();
+            // x_.wy() = u.wy();
+            // x_.wz() = u.wz();
             // x_.qy() = q_new(2);
             // x_.qz() = q_new(3);
             // x_.bax() = x.bax();

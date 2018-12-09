@@ -63,7 +63,17 @@ class VioMeasurementModel : public Kalman::MeasurementModel<State<T>, VioMeasure
     public:
         typedef Test1::State<T> S;
         typedef Test1::VioMeasurement<T> M;
-        VioMeasurementModel() {}
+        VioMeasurementModel() {
+            this->P(0,0) = T(0.2);
+            this->P(1,1) = T(0.2);
+            this->P(2,2) = T(0.2);
+            this->P(3,3) = T(0.5);
+            this->P(4,4) = T(0.5);
+            this->P(5,5) = T(0.5);
+            this->P(3,3) = T(0.5);
+            this->P(4,4) = T(0.5);
+            this->P(5,5) = T(0.5);
+        }
 
         M h(const S& x) const {
             M measurement;

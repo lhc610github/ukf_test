@@ -111,7 +111,8 @@ class Filter_update_part {
                 // vio_state.vio_wy() = msg.twist.twist.angular.y;
                 // vio_state.vio_wz() = msg.twist.twist.angular.z;
 
-                update_process(vio_state, msg.header.stamp);
+                // update_process(vio_state, msg.header.stamp);
+                update_process(vio_state, ros::Time::now());
             }
         }
 
@@ -145,9 +146,9 @@ class Filter_update_part {
             pthread_mutex_lock(&_ukf_core_mutex);
             _x_ukf = _ukf_ptr->predict(_sys, imu_state);
             pthread_mutex_unlock(&_ukf_core_mutex);
-            ros_publish_state(_x_ukf, _time_stamp);
+            ros_publish_state(_x_ukf,_sys, _time_stamp);
     #ifdef LOG_FLAG
-            record_predict(_x_ukf, _time_stamp);
+            record_predict(_x_ukf,_sys, _time_stamp);
     #endif
         }
 
@@ -164,7 +165,7 @@ class Filter_update_part {
             _predict_has_init = temp;
         }
 
-        void ros_publish_state( State & now_state, ros::Time & _timestamp) {
+        void ros_publish_state( State & now_state, SystemModel & system_data,ros::Time & _timestamp) {
             geometry_msgs::PoseStamped _pos_msg;
             geometry_msgs::Vector3Stamped _vel_msg;
             geometry_msgs::Vector3Stamped _acc_msg;
@@ -181,9 +182,9 @@ class Filter_update_part {
             _vel_msg.vector.z = now_state.vz();
 
             _acc_msg.header.stamp = _timestamp;
-            _acc_msg.vector.x = now_state.ax();
-            _acc_msg.vector.y = now_state.ay();
-            _acc_msg.vector.z = now_state.az();
+            _acc_msg.vector.x = system_data.ax_out;
+            _acc_msg.vector.y = system_data.ay_out;
+            _acc_msg.vector.z = system_data.az_out;
 
             Eigen::Vector3d _eular_att;
             _eular_att(0) = now_state.qx()*T(M_PI)/T(180);
@@ -205,7 +206,7 @@ class Filter_update_part {
 
     #ifdef LOG_FLAG
         void start_logger() {
-            predict_logger.open("/home/lhc/work/estimator_ws/src/ukf_test/logger/real_predict.csv");
+            predict_logger.open("/home/lhc/work/estimator2_ws/src/ukf_test/logger/real_predict.csv");
             if (!predict_logger.is_open()) {
                 ROS_WARN("cannot open the logger");
             } else {
@@ -231,7 +232,7 @@ class Filter_update_part {
                 // predict_logger << "bias_wz" << std::endl;
             }
 
-            update_logger.open("/home/lhc/work/estimator_ws/src/ukf_test/logger/real_update.csv");
+            update_logger.open("/home/lhc/work/estimator2_ws/src/ukf_test/logger/real_update.csv");
             if (!update_logger.is_open()) {
                 ROS_WARN("cannot open the logger");
             } else {
@@ -248,7 +249,7 @@ class Filter_update_part {
             }
         }
 
-        void record_predict(State& _p_d, ros::Time & _time_stamp) {
+        void record_predict(State& _p_d, SystemModel& system_data, ros::Time & _time_stamp) {
             if (predict_logger.is_open()) {
                 predict_logger << _time_stamp << ",";
                 predict_logger << _p_d.x() << ",";
@@ -257,9 +258,9 @@ class Filter_update_part {
                 predict_logger << _p_d.vx() << ",";
                 predict_logger << _p_d.vy() << ",";
                 predict_logger << _p_d.vz() << ",";
-                predict_logger << _p_d.ax() << ",";
-                predict_logger << _p_d.ay() << ",";
-                predict_logger << _p_d.az() << ",";
+                predict_logger << system_data.ax_out << ",";
+                predict_logger << system_data.ay_out << ",";
+                predict_logger << system_data.az_out << ",";
                 predict_logger << _p_d.qx() << ",";
                 predict_logger << _p_d.qy() << ",";
                 // predict_logger << _p_d.qz() << ",";

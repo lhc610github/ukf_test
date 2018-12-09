@@ -1,5 +1,5 @@
 #define _USE_MATH_DEFINES
-// #define LOG_FLAG
+#define LOG_FLAG
 #include <cmath>
 
 
@@ -21,24 +21,25 @@
 #include <fstream>
 #endif
 
-typedef float T;
-typedef Test1::State<T> S_;
+// typedef float T;
+// typedef Test1::State<T> S_;
 
-typedef Test1::Control<T> C_;
-typedef Test1::SystemModel<T> SM_;
+// typedef Test1::Control<T> C_;
+// typedef Test1::SystemModel<T> SM_;
 
-typedef Test1::VioMeasurement<T> VMeas_;
-typedef Test1::VioMeasurementModel<T> VM_;
+// typedef Test1::VioMeasurement<T> VMeas_;
+// typedef Test1::VioMeasurementModel<T> VM_;
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "ukf_node");
     ros::NodeHandle node("~");
     std::cout << "hello" << std::endl;
-    Filter_predict_part<T, S_, C_, SM_, VMeas_, VM_ > filter_core(node);
-    // ros::AsyncSpinner spinner(3);
-    // spinner.start();
-    // ros::waitForShutdown();
-    // spinner.stop();
-    ros::spin();
+    // Filter_predict_part<T, S_, C_, SM_, VMeas_, VM_ > filter_core(node);
+    Filter_predict_part filter_core(node);
+    ros::AsyncSpinner spinner(4);
+    spinner.start();
+    ros::waitForShutdown();
+    spinner.stop();
+    // ros::spin();
     return 0;
 }
