@@ -206,7 +206,7 @@ class Filter_update_part {
 
     #ifdef LOG_FLAG
         void start_logger() {
-            predict_logger.open("/home/lhc/work/estimator2_ws/src/ukf_test/logger/real_predict.csv");
+            predict_logger.open("/home/lhc/work/estimator_ws/src/ukf_test/logger/real_predict.csv");
             if (!predict_logger.is_open()) {
                 ROS_WARN("cannot open the logger");
             } else {
@@ -232,7 +232,7 @@ class Filter_update_part {
                 // predict_logger << "bias_wz" << std::endl;
             }
 
-            update_logger.open("/home/lhc/work/estimator2_ws/src/ukf_test/logger/real_update.csv");
+            update_logger.open("/home/lhc/work/estimator_ws/src/ukf_test/logger/real_update.csv");
             if (!update_logger.is_open()) {
                 ROS_WARN("cannot open the logger");
             } else {

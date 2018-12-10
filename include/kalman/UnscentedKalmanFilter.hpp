@@ -235,12 +235,12 @@ namespace Kalman {
             Covariance<Type> temp_cov = tmp.cwiseProduct(W) * tmp.transpose() + noiseCov;
             // std::cout << noiseCov << std::endl; 
 
-            for (int _i = 0; _i < temp_cov.rows() ;_i ++) {
-                if (temp_cov(_i, _i) <= 0.0f) {
-                    std::cout << "get bad covariance when cal Sigma" << std::endl;
-                    return false;
-                }
-            }
+            // for (int _i = 0; _i < temp_cov.rows() ;_i ++) {
+            //     if (temp_cov(_i, _i) <= 0.0f) {
+            //         std::cout << "get bad covariance when cal Sigma" << std::endl;
+            //         return false;
+            //     }
+            // }
 
             cov = temp_cov;
             return true;
