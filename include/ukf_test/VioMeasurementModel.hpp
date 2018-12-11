@@ -73,7 +73,28 @@ class VioMeasurementModel : public Kalman::MeasurementModel<State<T>, VioMeasure
             // this->P(6,6) = T(0.10);
             // this->P(7,7) = T(0.10);
             // this->P(8,8) = T(0.10);
-            this->P = this->P*T(2);
+            // this->P(0,0) = T(0.01);
+            // this->P(1,1) = T(0.01);
+            // this->P(2,2) = T(0.01);
+            // this->P(3,3) = T(0.1);
+            // this->P(4,4) = T(0.1);
+            // this->P(5,5) = T(0.1);
+            // this->P(6,6) = T(0.001);
+            // this->P(7,7) = T(0.001);
+            // this->P(8,8) = T(0.001);
+
+        }
+
+        void set_conv(T conv_P, T conv_V, T conv_Att) {
+            this->P(0,0) = conv_P;
+            this->P(1,1) = conv_P;
+            this->P(2,2) = conv_P;
+            this->P(3,3) = conv_Att;
+            this->P(4,4) = conv_Att;
+            this->P(5,5) = conv_Att;
+            this->P(6,6) = conv_V;
+            this->P(7,7) = conv_V;
+            this->P(8,8) = conv_V;
         }
 
         M h(const S& x) const {

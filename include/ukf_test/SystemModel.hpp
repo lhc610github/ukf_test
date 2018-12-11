@@ -195,31 +195,65 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             // _temp_P(10,10) = T(2.0);
             // _temp_P(11,11) = T(2.0);
             // setCovariance(_temp_P);
-            this->P(0,0) = T(0.5);
-            this->P(1,1) = T(0.5);
-            this->P(2,2) = T(0.5);
+            // this->P(0,0) = T(0.01);
+            // this->P(1,1) = T(0.01);
+            // this->P(2,2) = T(0.01);
 
-            this->P(3,3) = T(0.6);
-            this->P(4,4) = T(0.6);
-            this->P(5,5) = T(0.6);
+            // this->P(3,3) = T(0.001);
+            // this->P(4,4) = T(0.001);
+            // this->P(5,5) = T(0.001);
 
-            this->P(6,6) = T(1.0);
-            this->P(7,7) = T(1.0);
-            this->P(8,8) = T(1.0);
+            // this->P(6,6) = T(0.1);
+            // this->P(7,7) = T(0.1);
+            // this->P(8,8) = T(0.1);
 
-            this->P(9,9) = T(0.002);
-            this->P(10,10) = T(0.002);
-            this->P(11,11) = T(0.002);
-            this->P(12,12) = T(0.002);
-            this->P(13,13) = T(0.002);
-            this->P(14,14) = T(0.002);
+            // // this->P(9,9) = T(0.00005);
+            // // this->P(10,10) = T(0.00005);
+            // // this->P(11,11) = T(0.00005);
+            // this->P(9,9) = T(0.0000005);
+            // this->P(10,10) = T(0.0000005);
+            // this->P(11,11) = T(0.0000005);
+            // this->P(12,12) = T(0.0000001);
+            // this->P(13,13) = T(0.0000001);
+            // this->P(14,14) = T(0.0000001);
 
-            this->P(15,15) = T(0.2);
-            this->P(16,16) = T(0.2);
-            this->P(17,17) = T(0.2);
-            this->P(18,18) = T(0.2);
-            this->P(19,19) = T(0.2);
-            this->P(20,20) = T(0.2);       
+            // // this->P(15,15) = T(0.0002);
+            // // this->P(16,16) = T(0.0002);
+            // // this->P(17,17) = T(0.0002);
+            // this->P(15,15) = T(0.0000002);
+            // this->P(16,16) = T(0.0000002);
+            // this->P(17,17) = T(0.0000002);
+            // this->P(18,18) = T(0.00000002);
+            // this->P(19,19) = T(0.00000002);
+            // this->P(20,20) = T(0.00000002);       
+        }
+        
+        void set_conv(T c_P, T c_V, T c_Att, T c_ba, T c_bw, T c_na, T c_nw) {
+            this->P(0,0) = c_P;
+            this->P(1,1) = c_P;
+            this->P(2,2) = c_P;
+
+            this->P(3,3) = c_V;
+            this->P(4,4) = c_V;
+            this->P(5,5) = c_V;
+
+            this->P(6,6) = c_Att;
+            this->P(7,7) = c_Att;
+            this->P(8,8) = c_Att;
+
+            this->P(9,9) = c_ba;
+            this->P(10,10) = c_ba;
+            this->P(11,11) = c_ba;
+            this->P(12,12) = c_bw;
+            this->P(13,13) = c_bw;
+            this->P(14,14) = c_bw;
+
+            this->P(15,15) = c_na;
+            this->P(16,16) = c_na;
+            this->P(17,17) = c_na;
+            this->P(18,18) = c_nw;
+            this->P(19,19) = c_nw;
+            this->P(20,20) = c_nw;
         }
         
         mutable T ax_out;

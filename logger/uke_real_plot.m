@@ -122,6 +122,53 @@ hold off
 
 
 figure(6)
+subplot(3,1,1)
+plot(t_p, real_p.bias_ax,'.-');
+hold on
+% plot(t_u, real_u.ax,'.-');
+legend('ukf');
+title('bax')
+hold off
+subplot(3,1,2)
+plot(t_p, real_p.bias_ay,'.-');
+hold on
+% plot(t_u, real_u.vy,'.-');
+legend('ukf');
+title('bay')
+hold off
+subplot(3,1,3)
+plot(t_p, real_p.bias_az,'.-');
+hold on
+% plot(t_u, real_u.vz,'.-');
+legend('ukf');
+title('baz')
+hold off
+
+
+figure(7)
+subplot(3,1,1)
+plot(t_p, real_p.bias_wx,'.-');
+hold on
+% plot(t_u, real_u.ax,'.-');
+legend('ukf');
+title('bwx')
+hold off
+subplot(3,1,2)
+plot(t_p, real_p.bias_wy,'.-');
+hold on
+% plot(t_u, real_u.vy,'.-');
+legend('ukf');
+title('bwy')
+hold off
+subplot(3,1,3)
+plot(t_p, real_p.bias_wz,'.-');
+hold on
+% plot(t_u, real_u.vz,'.-');
+legend('ukf');
+title('bwz')
+hold off
+
+figure(8)
 plot3(real_p.x, real_p.y, real_p.z,'.-');
 hold on
 plot3(real_u.x, real_u.y, real_u.z,'.-');

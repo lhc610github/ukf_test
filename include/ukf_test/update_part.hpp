@@ -43,6 +43,20 @@ class Filter_update_part {
             nh_.param<std::string>("veltopic", _veltopic, "/vio_data_rigid1/vel");
             nh_.param<std::string>("acctopic", _acctopic, "/vio_data_rigid1/acc");
             nh_.param<std::string>("atttopic", _atttopic, "/vio_data_rigid1/att");
+            float _vm_conv_P, _vm_conv_V, _vm_conv_Att, _sm_conv_P, _sm_conv_V, _sm_conv_Att, _sm_conv_ba, _sm_conv_bw, _sm_conv_na, _sm_conv_nw;
+            nh_.param<float>("vm_cov_P", _vm_conv_P, 0.01f);
+            nh_.param<float>("vm_cov_V", _vm_conv_V, 0.001f);
+            nh_.param<float>("vm_cov_Att", _vm_conv_Att, 0.1f);
+            nh_.param<float>("sm_cov_P", _sm_conv_P, 0.01f);
+            nh_.param<float>("sm_cov_V", _sm_conv_V, 0.001f);
+            nh_.param<float>("sm_cov_Att", _sm_conv_Att, 0.1f);
+            nh_.param<float>("sm_cov_ba", _sm_conv_ba, 5e-6f);
+            nh_.param<float>("sm_cov_bw", _sm_conv_bw, 1e-6f);
+            nh_.param<float>("sm_cov_na", _sm_conv_na, 2e-6f);
+            nh_.param<float>("sm_cov_nw", _sm_conv_nw, 2e-7f);
+            
+            _vm.set_conv(_vm_conv_P, _vm_conv_V, _vm_conv_Att);
+            _sys.set_conv(_sm_conv_P, _sm_conv_V, _sm_conv_Att, _sm_conv_ba, _sm_conv_bw, _sm_conv_na, _sm_conv_nw);
 
             T _alpha = T(alpha);
             T _beta = T(beta);

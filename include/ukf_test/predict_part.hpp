@@ -186,6 +186,7 @@ class Filter_predict_part : public Filter_update_part<T, S_, C_, SM_, VMeas_, VM
         void start_predict_loop() {
             ros::Rate predict_loop_rate(predict_rate);
             while (ros::ok()) {
+                bool _is_predict_this_time = false;
                 if (imu_sequ.size() >  imu_cal_num+ imu_delay) {
                     pthread_mutex_lock(&imu_data_mutex);
                     if (_first_predict) {
@@ -224,6 +225,7 @@ class Filter_predict_part : public Filter_update_part<T, S_, C_, SM_, VMeas_, VM
                                 this->predict_process(_C, imu_sequ[imu_sequ_index-imu_delay-1].header);
                                 this->set_predict_valid(true);
                                 this->set_ready_to_update(true);
+                                _is_predict_this_time = true;
                             }
                         } else if (dt >= 1.0f) {
                             _first_predict = true;
@@ -234,7 +236,10 @@ class Filter_predict_part : public Filter_update_part<T, S_, C_, SM_, VMeas_, VM
                     }
                     pthread_mutex_unlock(&imu_data_mutex);
                 }
-                predict_loop_rate.sleep();
+                if (_is_predict_this_time)
+                    predict_loop_rate.sleep();
+                else
+                    usleep(100);
             }
         }
 
