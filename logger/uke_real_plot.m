@@ -97,6 +97,13 @@ legend('ukf');
 title('az')
 hold off
 
+figure(5)
+plot3(real_p.x, real_p.y, real_p.z,'.-');
+hold on
+plot3(real_u.x, real_u.y, real_u.z,'.-');
+legend('ukf','vio');
+grid on
+hold off
 
 % figure(5)
 % subplot(3,1,1)

@@ -177,15 +177,21 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             this->P(0,0) = T(0.5);
             this->P(1,1) = T(0.5);
             this->P(2,2) = T(0.5);
-            this->P(3,3) = T(1.0);
-            this->P(4,4) = T(1.0);
-            this->P(5,5) = T(1.0);
+
+            this->P(3,3) = T(0.6);
+            this->P(4,4) = T(0.6);
+            this->P(5,5) = T(0.6);
+
             this->P(6,6) = T(1.0);
-            this->P(7,7) = T(2.0);
-            this->P(8,8) = T(2.0);
-            this->P(9,9) = T(2.0);
-            this->P(10,10) = T(2.0);
-            this->P(11,11) = T(2.0);
+            this->P(7,7) = T(1.0);
+            this->P(8,8) = T(1.0);
+
+            this->P(9,9) = T(0.002);
+            this->P(10,10) = T(0.002);
+            this->P(11,11) = T(0.002);
+            this->P(12,12) = T(0.002);
+            this->P(13,13) = T(0.002);
+            this->P(14,14) = T(0.002);
         }
         
         mutable T ax_out;
@@ -200,6 +206,9 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             // T ax = u.ax() - x.bax();
             // T ay = u.ay() - x.bay();
             // T az = u.az() - x.baz();
+
+            // std::cout <<"x: " << x.transpose() << std::endl;
+            // std::cout <<"u: " << u.transpose() << std::endl;
             T ax = -u.ax() - x.bax();
             T ay = -u.ay() - x.bay();
             T az = -u.az() - x.baz();
@@ -209,9 +218,9 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
 
 
 
-            T x_new = x.x() + x.vx() * u.dt();
-            T y_new = x.y() + x.vy() * u.dt();
-            T z_new = x.z() + x.vz() * u.dt();
+            T x_new = x.x() + x.vx() * u.dt() + T(1)/T(2) * ax * u.dt() *u.dt();
+            T y_new = x.y() + x.vy() * u.dt() + T(1)/T(2) * ay * u.dt() *u.dt();
+            T z_new = x.z() + x.vz() * u.dt() + T(1)/T(2) * az * u.dt() *u.dt();
 
             // Kalman::SquareMatrix<T, 3> R_;
             Eigen::Vector3d e_;
@@ -247,12 +256,12 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             T vy_new = x.vy() + ga_y * u.dt();
             T vz_new = x.vz() + ga_z * u.dt();
 
-            // T wx_new = u.wx() - x.bwx();
-            // T wy_new = u.wy() - x.bwy();
-            // T wz_new = u.wz() - x.bwz();
-            T wx_new = u.wx();
-            T wy_new = u.wy();
-            T wz_new = u.wz();
+            T wx_new = u.wx() - x.bwx();
+            T wy_new = u.wy() - x.bwy();
+            T wz_new = u.wz() - x.bwz();
+            // T wx_new = u.wx();
+            // T wy_new = u.wy();
+            // T wz_new = u.wz();
 
             wx_out = wx_new;
             wy_out = wy_new;
@@ -366,12 +375,12 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             // x_.wz() = u.wz();
             // x_.qy() = q_new(2);
             // x_.qz() = q_new(3);
-            // x_.bax() = x.bax();
-            // x_.bay() = x.bay();
-            // x_.baz() = x.baz();
-            // x_.bwx() = x.bwx();
-            // x_.bwy() = x.bwy();
-            // x_.bwz() = x.bwz();
+            x_.bax() = x.bax();
+            x_.bay() = x.bay();
+            x_.baz() = x.baz();
+            x_.bwx() = x.bwx();
+            x_.bwy() = x.bwy();
+            x_.bwz() = x.bwz();
 
             return x_;
         }

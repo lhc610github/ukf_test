@@ -110,9 +110,20 @@ class Filter_update_part {
                 // vio_state.vio_wx() = msg.twist.twist.angular.x
                 // vio_state.vio_wy() = msg.twist.twist.angular.y;
                 // vio_state.vio_wz() = msg.twist.twist.angular.z;
-
-                // update_process(vio_state, msg.header.stamp);
-                update_process(vio_state, ros::Time::now());
+                if ( _predict_has_init) {
+                    update_process(vio_state, msg.header.stamp);
+                } else {
+                    State x;
+                    x.setZero();
+                    x.x() = msg.pose.pose.position.x;
+                    x.y() = msg.pose.pose.position.y;
+                    x.z() = msg.pose.pose.position.z;
+                    x.qx() = vio_euler(0)/T(M_PI)*T(180);
+                    x.qy() = vio_euler(1)/T(M_PI)*T(180);
+                    x.qz() = vio_euler(2)/T(M_PI)*T(180);
+                    init_process(x);
+                }
+                // update_process(vio_state, ros::Time::now());
             }
         }
 

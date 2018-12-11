@@ -206,6 +206,7 @@ include_directories(
  )
  target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
+   -DNDEBUG
  )
 
 #############

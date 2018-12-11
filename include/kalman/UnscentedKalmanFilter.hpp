@@ -132,7 +132,10 @@ namespace Kalman {
             if(!computeSigmaPoints())
             {
                 // TODO: handle numerical error
-                assert(false);
+                // assert(false);
+                std::cout << "bad P set Identity" << std::endl;
+                P.setIdentity();
+                computeSigmaPoints();
             }
             
             // Compute predicted state

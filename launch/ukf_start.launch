@@ -11,9 +11,10 @@
         <param name="imu_topic" type="string" value="/imu_ns/imu/imu" />
         <param name="frame_id" type="string" value="$(arg frame_id)"/>
         <param name="imu_rate" type="int" value="1000" />
+        <param name="imu_delay" type="int" value="10" />
         <param name="predict_rate" type="int" value="100" />
         <param name="update_part/vio_topic" type="string" value="/fla/vio/odom"/>
-        <param name="update_part/alpha"  value="1" />
+        <param name="update_part/alpha"  value="1.0" />
         <param name="update_part/beta"  value="2.0"/>
         <param name="update_part/kappa"  value="0"/>
         <param name="update_part/verbose"  value="$(arg verbose)"/>
