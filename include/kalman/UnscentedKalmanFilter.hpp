@@ -128,6 +128,16 @@ namespace Kalman {
         template<class Control, template<class> class CovarianceBase>
         const State& predict( const SystemModelType<Control, CovarianceBase>& s, const Control& u )
         {
+
+            // correct P set zero
+            for (int _i = 0; _i < P.rows()-6; _i++) {
+                for (int _j = P.rows()-1 ; _j >= P.rows()-6 ; _j--) {
+                    P(_i,_j) = 0;
+                    P(_j,_i) = 0;
+                }
+            }
+            // std::cout << P << std::endl;
+
             // Compute sigma points
             if(!computeSigmaPoints())
             {

@@ -10,9 +10,9 @@
 namespace Test1 {
 
 template<typename T>
-class State : public Kalman::Vector<T, 15> {
+class State : public Kalman::Vector<T, 21> {
     public:
-        KALMAN_VECTOR(State, T, 15)
+        KALMAN_VECTOR(State, T, 21)
 
         //! X-position
         static constexpr size_t X = 0;
@@ -50,6 +50,14 @@ class State : public Kalman::Vector<T, 15> {
         static constexpr size_t bwY = 13;
         static constexpr size_t bwZ = 14;
         
+        static constexpr size_t naX = 15;
+        static constexpr size_t naY = 16;
+        static constexpr size_t naZ = 17;
+        // //! gyro bias
+        static constexpr size_t nwX = 18;
+        static constexpr size_t nwY = 19;
+        static constexpr size_t nwZ = 20;
+
         T x()        const { return (*this)[ X ]; }
         T y()        const { return (*this)[ Y ]; }
         T z()        const { return (*this)[ Z ]; }
@@ -72,6 +80,12 @@ class State : public Kalman::Vector<T, 15> {
         T bwx()      const { return (*this)[ bwX ]; }
         T bwy()      const { return (*this)[ bwY ]; }
         T bwz()      const { return (*this)[ bwZ ]; }
+        T nax()      const { return (*this)[ naX ]; }
+        T nay()      const { return (*this)[ naY ]; }
+        T naz()      const { return (*this)[ naZ ]; }
+        T nwx()      const { return (*this)[ nwX ]; }
+        T nwy()      const { return (*this)[ nwY ]; }
+        T nwz()      const { return (*this)[ nwZ ]; }
 
         T& x()        { return (*this)[ X ]; }
         T& y()        { return (*this)[ Y ]; }
@@ -95,6 +109,13 @@ class State : public Kalman::Vector<T, 15> {
         T& bwx()      { return (*this)[ bwX ]; }
         T& bwy()      { return (*this)[ bwY ]; }
         T& bwz()      { return (*this)[ bwZ ]; }
+
+        T& nax()      { return (*this)[ naX ]; }
+        T& nay()      { return (*this)[ naY ]; }
+        T& naz()      { return (*this)[ naZ ]; }
+        T& nwx()      { return (*this)[ nwX ]; }
+        T& nwy()      { return (*this)[ nwY ]; }
+        T& nwz()      { return (*this)[ nwZ ]; }
 };
 
 
@@ -192,6 +213,13 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             this->P(12,12) = T(0.002);
             this->P(13,13) = T(0.002);
             this->P(14,14) = T(0.002);
+
+            this->P(15,15) = T(0.2);
+            this->P(16,16) = T(0.2);
+            this->P(17,17) = T(0.2);
+            this->P(18,18) = T(0.2);
+            this->P(19,19) = T(0.2);
+            this->P(20,20) = T(0.2);       
         }
         
         mutable T ax_out;
@@ -375,12 +403,19 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             // x_.wz() = u.wz();
             // x_.qy() = q_new(2);
             // x_.qz() = q_new(3);
-            x_.bax() = x.bax();
-            x_.bay() = x.bay();
-            x_.baz() = x.baz();
-            x_.bwx() = x.bwx();
-            x_.bwy() = x.bwy();
-            x_.bwz() = x.bwz();
+            x_.bax() = x.bax() + x.nax()*u.dt();
+            x_.bay() = x.bay() + x.nay()*u.dt();
+            x_.baz() = x.baz() + x.naz()*u.dt();
+            x_.bwx() = x.bwx() + x.nwx()*u.dt();
+            x_.bwy() = x.bwy() + x.nwy()*u.dt();
+            x_.bwz() = x.bwz() + x.nwz()*u.dt();
+
+            x_.nax() = x.nax();
+            x_.nay() = x.nay();
+            x_.naz() = x.naz();
+            x_.nwx() = x.nwx();
+            x_.nwy() = x.nwy();
+            x_.nwz() = x.nwz();
 
             return x_;
         }

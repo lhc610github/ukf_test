@@ -98,6 +98,30 @@ title('az')
 hold off
 
 figure(5)
+subplot(3,1,1)
+plot(t_p, real_p.wx,'.-');
+hold on
+% plot(t_u, real_u.ax,'.-');
+legend('ukf');
+title('wx')
+hold off
+subplot(3,1,2)
+plot(t_p, real_p.wy,'.-');
+hold on
+% plot(t_u, real_u.vy,'.-');
+legend('ukf');
+title('wy')
+hold off
+subplot(3,1,3)
+plot(t_p, real_p.wz,'.-');
+hold on
+% plot(t_u, real_u.vz,'.-');
+legend('ukf');
+title('wz')
+hold off
+
+
+figure(6)
 plot3(real_p.x, real_p.y, real_p.z,'.-');
 hold on
 plot3(real_u.x, real_u.y, real_u.z,'.-');

@@ -223,6 +223,7 @@ class Filter_predict_part : public Filter_update_part<T, S_, C_, SM_, VMeas_, VM
                                 }
                                 this->predict_process(_C, imu_sequ[imu_sequ_index-imu_delay-1].header);
                                 this->set_predict_valid(true);
+                                this->set_ready_to_update(true);
                             }
                         } else if (dt >= 1.0f) {
                             _first_predict = true;

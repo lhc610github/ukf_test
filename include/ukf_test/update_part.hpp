@@ -28,6 +28,7 @@ class Filter_update_part {
         nh_("~update_part") {
             _has_init = false;
             _predict_has_init = false;
+            _ready_to_update = false;
             float alpha, beta, kappa;
             std::string vio_topic_name;
             std::string _postopic, _veltopic, _acctopic, _atttopic;
@@ -111,7 +112,10 @@ class Filter_update_part {
                 // vio_state.vio_wy() = msg.twist.twist.angular.y;
                 // vio_state.vio_wz() = msg.twist.twist.angular.z;
                 if ( _predict_has_init) {
+                    if (_ready_to_update) {
                     update_process(vio_state, msg.header.stamp);
+                    _ready_to_update = false;
+                    }
                 } else {
                     State x;
                     x.setZero();
@@ -125,6 +129,10 @@ class Filter_update_part {
                 }
                 // update_process(vio_state, ros::Time::now());
             }
+        }
+
+        void set_ready_to_update(bool temp) {
+            _ready_to_update = temp;
         }
 
         void reinit() {
@@ -233,14 +241,17 @@ class Filter_update_part {
                 predict_logger << "az" << ",";
                 predict_logger << "phi" << ",";
                 predict_logger << "theta" << ",";
-                // predict_logger << "psi" << ",";
-                predict_logger << "psi" << std::endl;
-                // predict_logger << "bias_ax" << ",";
-                // predict_logger << "bias_ay" << ",";
-                // predict_logger << "bias_az" << ",";
-                // predict_logger << "bias_wx" << ",";
-                // predict_logger << "bias_wy" << ",";
-                // predict_logger << "bias_wz" << std::endl;
+                predict_logger << "psi" << ",";
+                // predict_logger << "psi" << std::endl;
+                predict_logger << "wx" << ",";
+                predict_logger << "wy" << ",";
+                predict_logger << "wz" << ",";
+                predict_logger << "bias_ax" << ",";
+                predict_logger << "bias_ay" << ",";
+                predict_logger << "bias_az" << ",";
+                predict_logger << "bias_wx" << ",";
+                predict_logger << "bias_wy" << ",";
+                predict_logger << "bias_wz" << std::endl;
             }
 
             update_logger.open("/home/lhc/work/estimator_ws/src/ukf_test/logger/real_update.csv");
@@ -274,14 +285,17 @@ class Filter_update_part {
                 predict_logger << system_data.az_out << ",";
                 predict_logger << _p_d.qx() << ",";
                 predict_logger << _p_d.qy() << ",";
-                // predict_logger << _p_d.qz() << ",";
-                predict_logger << _p_d.qz() << std::endl;
-                // predict_logger << _p_d.bax() << ",";
-                // predict_logger << _p_d.bay() << ",";
-                // predict_logger << _p_d.baz() << ",";
-                // predict_logger << _p_d.bwx() << ",";
-                // predict_logger << _p_d.bwy() << ",";
-                // predict_logger << _p_d.bwz() << std::endl;
+                predict_logger << _p_d.qz() << ",";
+                // predict_logger << _p_d.qz() << std::endl;
+                predict_logger << system_data.wx_out << ",";
+                predict_logger << system_data.wy_out << ",";
+                predict_logger << system_data.wz_out << ",";
+                predict_logger << _p_d.bax() << ",";
+                predict_logger << _p_d.bay() << ",";
+                predict_logger << _p_d.baz() << ",";
+                predict_logger << _p_d.bwx() << ",";
+                predict_logger << _p_d.bwy() << ",";
+                predict_logger << _p_d.bwz() << std::endl;
             }
         }
 
@@ -307,6 +321,7 @@ class Filter_update_part {
         Kalman::UnscentedKalmanFilter<State> * _ukf_ptr;
         bool _has_init;
         bool _predict_has_init;
+        bool _ready_to_update;
         ros::Subscriber Vio_measure_sub;
         ros::Publisher _rigid_pos_pub;
         ros::Publisher _rigid_vel_pub;
