@@ -190,7 +190,7 @@ namespace Kalman {
             for (int _i = 0; _i < P.rows() ;_i ++) {
                 if (P(_i, _i) < 0.0f) {
                     //P(_i, _i) = 1.0f;
-                    std::cout << "wrong P reinit" << std::endl;
+                    // std::cout << "wrong P reinit" << std::endl;
                     P.setIdentity();
                     break;
                 }

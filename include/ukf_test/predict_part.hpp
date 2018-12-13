@@ -20,9 +20,13 @@ class Filter_predict_part : public Filter_update_part<T, State, Control, SystemM
             nh_predict_.param<std::string>("imu_topic", imu_topic_name, "/imu");
             nh_predict_.param<std::string>("frame_id", frameId, std::string("imu"));
             nh_predict_.param<int>("imu_rate", predict_rate, 200);
-            imu_sub = nh_predict_.subscribe(imu_topic_name, 1, &Filter_predict_part::imu_update_cb, this);
+            imu_sub = nh_predict_.subscribe(imu_topic_name, 10, &Filter_predict_part::imu_update_cb, this);
             _delta_t_max = 1.0f/float(predict_rate);
             std::cout << "max dt = [" << _delta_t_max << "]" << std::endl;
+            if (_delta_t_max < 0.005f) {
+                ROS_WARN("high predict rate, limit to the 200Hz");
+                _delta_t_max = 0.005f;
+            }
         }
 
         ~Filter_predict_part() {
@@ -35,7 +39,7 @@ class Filter_predict_part : public Filter_update_part<T, State, Control, SystemM
                 _first_predict = false;
             } else {
                 double dt = (msg.header.stamp - _last_timestamp).toSec();
-                if ( dt > _delta_t_max && dt < 1.0f) {
+                if ( dt > _delta_t_max*0.7f && dt < 1.0f) {
                     _last_timestamp = msg.header.stamp;
                     if (this->get_update_init_state()) {
                         Control _C;

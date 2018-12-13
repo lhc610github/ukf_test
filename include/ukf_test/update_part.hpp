@@ -88,6 +88,7 @@ class Filter_update_part {
                 x.qz() = vio_euler(2)/T(M_PI)*T(180);
                 init_process(x);
                 _has_init = true;
+                ROS_WARN("init ukf filter ");
             } else {
                 VioMeasurement vio_state;
                 vio_state.vio_x() = msg.pose.pose.position.x;
@@ -122,6 +123,7 @@ class Filter_update_part {
         }
 
         void init_process(State& init_state) {
+            std::cout << "init_x: [" << init_state.transpose() << "]" << std::endl;
             pthread_mutex_lock(&_ukf_core_mutex);
             _ukf_ptr->init(init_state);
             pthread_mutex_unlock(&_ukf_core_mutex);
@@ -170,32 +172,41 @@ class Filter_update_part {
             geometry_msgs::Vector3Stamped _acc_msg;
             geometry_msgs::PoseStamped _att_msg;
 
-            _pos_msg.header.stamp = _timestamp;
-            _pos_msg.pose.position.x = now_state.x();
-            _pos_msg.pose.position.y = now_state.y();
-            _pos_msg.pose.position.z = now_state.z();
-
-            _vel_msg.header.stamp = _timestamp;
-            _vel_msg.vector.x = now_state.vx();
-            _vel_msg.vector.y = now_state.vy();
-            _vel_msg.vector.z = now_state.vz();
-
-            _acc_msg.header.stamp = _timestamp;
-            _acc_msg.vector.x = now_state.ax();
-            _acc_msg.vector.y = now_state.ay();
-            _acc_msg.vector.z = now_state.az();
-
             Eigen::Vector3d _eular_att;
             _eular_att(0) = now_state.qx()*T(M_PI)/T(180);
             _eular_att(1) = now_state.qy()*T(M_PI)/T(180);
             _eular_att(2) = now_state.qz()*T(M_PI)/T(180);
             Eigen::Quaterniond _quat_att;
             get_q_from_euler(_quat_att, _eular_att);
+
             _att_msg.header.stamp = _timestamp;
+            _pos_msg.header.stamp = _timestamp;
+            _pos_msg.pose.position.x = -now_state.x();
+            _pos_msg.pose.position.y = now_state.y();
+            _pos_msg.pose.position.z = -now_state.z();
+            _pos_msg.pose.orientation.w = _quat_att.w();
+            _pos_msg.pose.orientation.x = -_quat_att.x();
+            _pos_msg.pose.orientation.y = _quat_att.y();
+            _pos_msg.pose.orientation.z = -_quat_att.z();
+
+            _vel_msg.header.stamp = _timestamp;
+            _vel_msg.vector.x = -now_state.vx();
+            _vel_msg.vector.y = now_state.vy();
+            _vel_msg.vector.z = -now_state.vz();
+
+            _acc_msg.header.stamp = _timestamp;
+            _acc_msg.vector.x = -now_state.ax();
+            _acc_msg.vector.y = now_state.ay();
+            _acc_msg.vector.z = -now_state.az();
+
+
+            _att_msg.pose.position.x = -now_state.x();
+            _att_msg.pose.position.y = now_state.y();
+            _att_msg.pose.position.z = -now_state.z();
             _att_msg.pose.orientation.w = _quat_att.w();
-            _att_msg.pose.orientation.x = _quat_att.x();
+            _att_msg.pose.orientation.x = -_quat_att.x();
             _att_msg.pose.orientation.y = _quat_att.y();
-            _att_msg.pose.orientation.z = _quat_att.z();
+            _att_msg.pose.orientation.z = -_quat_att.z();
 
             _rigid_pos_pub.publish(_pos_msg);
             _rigid_vel_pub.publish(_vel_msg);

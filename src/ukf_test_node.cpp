@@ -33,7 +33,7 @@ typedef Test1::VioMeasurementModel<T> VM_;
 int main(int argc, char** argv) {
     ros::init(argc, argv, "ukf_node");
     ros::NodeHandle node("~");
-    std::cout << "hello" << std::endl;
+    // std::cout << "hello" << std::endl;
     Filter_predict_part<T, S_, C_, SM_, VMeas_, VM_ > filter_core(node);
     ros::AsyncSpinner spinner(3);
     spinner.start();
