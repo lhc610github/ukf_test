@@ -96,11 +96,14 @@ class Filter_update_part {
                 vio_q.x() = msg.pose.pose.orientation.x;
                 vio_q.y() = msg.pose.pose.orientation.y;
                 vio_q.z() = msg.pose.pose.orientation.z;
-                Eigen::Vector3d vio_euler;
-                get_euler_from_q(vio_euler, vio_q);
-                x.qx() = vio_euler(0)/T(M_PI)*T(180);
-                x.qy() = vio_euler(1)/T(M_PI)*T(180);
-                x.qz() = vio_euler(2)/T(M_PI)*T(180);
+                Eigen::Matrix3d temp_R;
+                get_dcm_from_q(temp_R, vio_q);
+                _sys_R = temp_R;
+                _last_update_R = temp_R;
+                _sys.set_last_R(_last_update_R);
+                x.qx() = T(0);
+                x.qy() = T(0);
+                x.qz() = T(0);
                 init_process(x);
                 _has_init = true;
             } else {
@@ -113,21 +116,33 @@ class Filter_update_part {
                 vio_q.x() = msg.pose.pose.orientation.x;
                 vio_q.y() = msg.pose.pose.orientation.y;
                 vio_q.z() = msg.pose.pose.orientation.z;
-                Eigen::Vector3d vio_euler;
-                get_euler_from_q(vio_euler, vio_q);
-                vio_state.vio_qx() = vio_euler(0)/T(M_PI)*T(180);
-                vio_state.vio_qy() = vio_euler(1)/T(M_PI)*T(180);
-                vio_state.vio_qz() = vio_euler(2)/T(M_PI)*T(180);
+                // Eigen::Vector3d vio_euler;
+                Eigen::Matrix3d temp_R;
+                get_dcm_from_q(temp_R, vio_q);
 
-                vio_state.vio_vx() = msg.twist.twist.linear.x;
-                vio_state.vio_vy() = msg.twist.twist.linear.y;
-                vio_state.vio_vz() = msg.twist.twist.linear.z;
-                // vio_state.vio_wx() = msg.twist.twist.angular.x
-                // vio_state.vio_wy() = msg.twist.twist.angular.y;
-                // vio_state.vio_wz() = msg.twist.twist.angular.z;
+
                 if ( _predict_has_init) {
                     if (_ready_to_update) {
-                    update_process(vio_state, msg.header.stamp);
+                    // cal dw
+                        Eigen::Vector3d temp_dw;
+                        get_eR_from_two_R(temp_dw, temp_R, _last_update_R);
+                        std::cout << temp_dw.transpose() << std::endl;
+                        vio_state.vio_qx() = temp_dw(0)/T(M_PI)*T(180); //TODO
+                        vio_state.vio_qy() = temp_dw(1)/T(M_PI)*T(180);
+                        vio_state.vio_qz() = temp_dw(2)/T(M_PI)*T(180);
+
+                        vio_state.vio_vx() = msg.twist.twist.linear.x;
+                        vio_state.vio_vy() = msg.twist.twist.linear.y;
+                        vio_state.vio_vz() = msg.twist.twist.linear.z;
+
+                    update_process(vio_state, msg.header.stamp, vio_q);
+
+                        _last_update_R = temp_R;
+                        // or
+                        // _last_update_R = _sys_R;
+                        // _sys.set_last_R(_last_update_R);
+                        _sys.set_last_R(_sys_R);
+
                     _ready_to_update = false;
                     }
                 } else {
@@ -136,9 +151,12 @@ class Filter_update_part {
                     x.x() = msg.pose.pose.position.x;
                     x.y() = msg.pose.pose.position.y;
                     x.z() = msg.pose.pose.position.z;
-                    x.qx() = vio_euler(0)/T(M_PI)*T(180);
-                    x.qy() = vio_euler(1)/T(M_PI)*T(180);
-                    x.qz() = vio_euler(2)/T(M_PI)*T(180);
+                    _sys_R = temp_R;
+                    _last_update_R = temp_R;
+                    _sys.set_last_R(_last_update_R);
+                    x.qx() = T(0);//vio_euler(0)/T(M_PI)*T(180);
+                    x.qy() = T(0);//vio_euler(1)/T(M_PI)*T(180);
+                    x.qz() = T(0);//vio_euler(2)/T(M_PI)*T(180);
                     init_process(x);
                 }
                 // update_process(vio_state, ros::Time::now());
@@ -161,9 +179,23 @@ class Filter_update_part {
             pthread_mutex_unlock(&_ukf_core_mutex);
         }
 
-        void update_process(VioMeasurement& vio_state, ros::Time _time_stamp) {
+        void update_process(VioMeasurement& vio_state, ros::Time _time_stamp, Eigen::Quaterniond temp_q) {
             pthread_mutex_lock(&_ukf_core_mutex);
             _x_ukf = _ukf_ptr->update(_vm, vio_state);
+
+            Eigen::Vector3d temp_dwq;
+            temp_dwq(0) = _x_ukf.qx()/T(180)*T(M_PI);
+            temp_dwq(1) = _x_ukf.qy()/T(180)*T(M_PI);
+            temp_dwq(2) = _x_ukf.qz()/T(180)*T(M_PI);
+
+            Eigen::Matrix3d _temp_R;
+            get_R_from_R_cha_e(_temp_R, _last_update_R, temp_dwq);
+            _sys_R = _temp_R;
+
+            _x_ukf.qx() = T(0);
+            _x_ukf.qy() = T(0);
+            _x_ukf.qz() = T(0);
+            _ukf_ptr->init(_x_ukf);
             pthread_mutex_unlock(&_ukf_core_mutex);
             if (_verbose) {
                 std::cout << "x(vio): [" << vio_state << "]" << std::endl;
@@ -171,13 +203,15 @@ class Filter_update_part {
             }
     #ifdef LOG_FLAG
             // record_predict(_x_ukf, _time_stamp);
-            record_update(vio_state, _time_stamp);
+            record_update(vio_state, _time_stamp, temp_q);
     #endif
         }
 
         void predict_process(Control& imu_state, ros::Time _time_stamp) {
             pthread_mutex_lock(&_ukf_core_mutex);
+            // _sys.set_R(_sys_R);
             _x_ukf = _ukf_ptr->predict(_sys, imu_state);
+            _sys_R = _sys._R;
             pthread_mutex_unlock(&_ukf_core_mutex);
             ros_publish_state(_x_ukf,_sys, _time_stamp);
     #ifdef LOG_FLAG
@@ -219,12 +253,12 @@ class Filter_update_part {
             _acc_msg.vector.y = system_data.ay_out;
             _acc_msg.vector.z = system_data.az_out;
 
-            Eigen::Vector3d _eular_att;
-            _eular_att(0) = now_state.qx()*T(M_PI)/T(180);
-            _eular_att(1) = now_state.qy()*T(M_PI)/T(180);
-            _eular_att(2) = now_state.qz()*T(M_PI)/T(180);
+            // Eigen::Vector3d _eular_att;
+            // _eular_att(0) = now_state.qx()*T(M_PI)/T(180);
+            // _eular_att(1) = now_state.qy()*T(M_PI)/T(180);
+            // _eular_att(2) = now_state.qz()*T(M_PI)/T(180);
             Eigen::Quaterniond _quat_att;
-            get_q_from_euler(_quat_att, _eular_att);
+            get_q_from_dcm(_quat_att, _sys_R);
             _att_msg.header.stamp = _timestamp;
             _att_msg.pose.orientation.w = _quat_att.w();
             _att_msg.pose.orientation.x = _quat_att.x();
@@ -260,6 +294,9 @@ class Filter_update_part {
                 predict_logger << "wx" << ",";
                 predict_logger << "wy" << ",";
                 predict_logger << "wz" << ",";
+                predict_logger << "dwx" << ",";
+                predict_logger << "dwy" << ",";
+                predict_logger << "dwz" << ",";
                 predict_logger << "bias_ax" << ",";
                 predict_logger << "bias_ay" << ",";
                 predict_logger << "bias_az" << ",";
@@ -287,6 +324,8 @@ class Filter_update_part {
 
         void record_predict(State& _p_d, SystemModel& system_data, ros::Time & _time_stamp) {
             if (predict_logger.is_open()) {
+                Eigen::Vector3d temp_eular;
+                get_euler_from_R(temp_eular, _sys_R);
                 predict_logger << _time_stamp << ",";
                 predict_logger << _p_d.x() << ",";
                 predict_logger << _p_d.y() << ",";
@@ -297,13 +336,16 @@ class Filter_update_part {
                 predict_logger << system_data.ax_out << ",";
                 predict_logger << system_data.ay_out << ",";
                 predict_logger << system_data.az_out << ",";
-                predict_logger << _p_d.qx() << ",";
-                predict_logger << _p_d.qy() << ",";
-                predict_logger << _p_d.qz() << ",";
+                predict_logger << temp_eular(0)/T(M_PI)*T(180) << ",";
+                predict_logger << temp_eular(1)/T(M_PI)*T(180) << ",";
+                predict_logger << temp_eular(2)/T(M_PI)*T(180) << ",";
                 // predict_logger << _p_d.qz() << std::endl;
                 predict_logger << system_data.wx_out << ",";
                 predict_logger << system_data.wy_out << ",";
                 predict_logger << system_data.wz_out << ",";
+                predict_logger << _p_d.qx() << ",";
+                predict_logger << _p_d.qy() << ",";
+                predict_logger << _p_d.qz() << ",";
                 predict_logger << _p_d.bax() << ",";
                 predict_logger << _p_d.bay() << ",";
                 predict_logger << _p_d.baz() << ",";
@@ -313,8 +355,12 @@ class Filter_update_part {
             }
         }
 
-        void record_update(VioMeasurement& _m_d, ros::Time & _time_stamp) {
+        void record_update(VioMeasurement& _m_d, ros::Time & _time_stamp, Eigen::Quaterniond temp_q) {
             if (update_logger.is_open()) {
+
+                Eigen::Vector3d temp_eular;
+                get_euler_from_q(temp_eular, temp_q);
+
                 update_logger << _time_stamp << ",";
                 update_logger << _m_d.vio_x() << ",";
                 update_logger << _m_d.vio_y() << ",";
@@ -322,9 +368,9 @@ class Filter_update_part {
                 update_logger << _m_d.vio_vx() << ",";
                 update_logger << _m_d.vio_vy() << ",";
                 update_logger << _m_d.vio_vz() << ",";
-                update_logger << _m_d.vio_qx() << ",";
-                update_logger << _m_d.vio_qy() << ",";
-                update_logger << _m_d.vio_qz() << std::endl;
+                update_logger << temp_eular(0)/T(M_PI)*T(180) << ",";
+                update_logger << temp_eular(1)/T(M_PI)*T(180) << ",";
+                update_logger << temp_eular(2)/T(M_PI)*T(180) << std::endl;
             }
         }
     #endif
@@ -344,6 +390,8 @@ class Filter_update_part {
         State _x_ukf;
         SystemModel _sys;
         VioModel _vm;
+        Eigen::Matrix3d _sys_R;
+        Eigen::Matrix3d _last_update_R;
         bool _verbose;
         pthread_mutex_t _ukf_core_mutex;
     #ifdef LOG_FLAG

@@ -165,6 +165,13 @@ namespace Kalman {
          * @param [in] z The measurement vector
          * @return The updated state estimate
          */
+        // template<class Measurement, template<class> class CovarianceBase>
+        // const void setdw_zero() {
+        //     x.qx() = T(0);
+        //     x.qy() = T(0);
+        //     x.qz() = T(0);
+        // }
+
         template<class Measurement, template<class> class CovarianceBase>
         const State& update( const MeasurementModelType<Measurement, CovarianceBase>& m, const Measurement& z )
         {

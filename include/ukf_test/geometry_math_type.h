@@ -125,4 +125,34 @@ void get_dcm_from_euler(Eigen::Matrix3d &R, const Eigen::Vector3d &e) {
 
 }
 
+void get_eR_from_two_R(Eigen::Vector3d &res, const Eigen::Matrix3d &Rd, const Eigen::Matrix3d &R) {
+    Eigen::Matrix3d temp_eR;
+    temp_eR = (R.transpose()*Rd - Rd.transpose()*R) / 2.0f;
+    res(0) = temp_eR(2,1);
+    res(1) = temp_eR(0,2);
+    res(2) = temp_eR(1,0);
+}
+
+void get_R_from_R_cha_e(Eigen::Matrix3d &res, const Eigen::Matrix3d &R, const Eigen::Vector3d &de) {
+    Eigen::Matrix3d Omega_cha;
+    Omega_cha.setIdentity();
+    Omega_cha(0,1) = -de(2);
+    Omega_cha(0,2) = de(1);
+    Omega_cha(1,0) = de(2);
+    Omega_cha(1,2) = -de(0);
+    Omega_cha(2,0) = -de(1);
+    Omega_cha(2,1) = de(0);
+    res = R * Omega_cha;
+    Eigen::Vector3d axis_temp;
+    axis_temp(0) = std::sqrt(res(0,0)*res(0,0) + res(1,0)*res(1,0) + res(2,0)*res(2,0));
+    axis_temp(1) = std::sqrt(res(0,1)*res(0,1) + res(1,1)*res(1,1) + res(2,1)*res(2,1));
+    axis_temp(2) = std::sqrt(res(0,2)*res(0,2) + res(1,2)*res(1,2) + res(2,2)*res(2,2));
+
+    for (int i = 0; i < 3 ; i++) {
+        for (int j = 0; j < 3; j++) {
+            res(i,j) = res(i,j)/axis_temp(j);
+        }
+    }
+}
+
 #endif

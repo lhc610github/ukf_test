@@ -180,52 +180,7 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
         typedef Test1::Control<T> C;
 
         SystemModel() {
-            // Covariance<StateType> _temp_P;
-            // _temp_P.setIdentity();
-            // _temp_P(0,0) = T(0.5);
-            // _temp_P(1,1) = T(0.5);
-            // _temp_P(2,2) = T(0.5);
-            // _temp_P(3,3) = T(1.0);
-            // _temp_P(4,4) = T(1.0);
-            // _temp_P(5,5) = T(1.0);
-            // _temp_P(6,6) = T(2.0);
-            // _temp_P(7,7) = T(2.0);
-            // _temp_P(8,8) = T(2.0);
-            // _temp_P(9,9) = T(2.0);
-            // _temp_P(10,10) = T(2.0);
-            // _temp_P(11,11) = T(2.0);
-            // setCovariance(_temp_P);
-            // this->P(0,0) = T(0.01);
-            // this->P(1,1) = T(0.01);
-            // this->P(2,2) = T(0.01);
-
-            // this->P(3,3) = T(0.001);
-            // this->P(4,4) = T(0.001);
-            // this->P(5,5) = T(0.001);
-
-            // this->P(6,6) = T(0.1);
-            // this->P(7,7) = T(0.1);
-            // this->P(8,8) = T(0.1);
-
-            // // this->P(9,9) = T(0.00005);
-            // // this->P(10,10) = T(0.00005);
-            // // this->P(11,11) = T(0.00005);
-            // this->P(9,9) = T(0.0000005);
-            // this->P(10,10) = T(0.0000005);
-            // this->P(11,11) = T(0.0000005);
-            // this->P(12,12) = T(0.0000001);
-            // this->P(13,13) = T(0.0000001);
-            // this->P(14,14) = T(0.0000001);
-
-            // // this->P(15,15) = T(0.0002);
-            // // this->P(16,16) = T(0.0002);
-            // // this->P(17,17) = T(0.0002);
-            // this->P(15,15) = T(0.0000002);
-            // this->P(16,16) = T(0.0000002);
-            // this->P(17,17) = T(0.0000002);
-            // this->P(18,18) = T(0.00000002);
-            // this->P(19,19) = T(0.00000002);
-            // this->P(20,20) = T(0.00000002);       
+            _R.setIdentity();
         }
         
         void set_conv(T c_P, T c_V, T c_Att, T c_ba, T c_bw, T c_na, T c_nw) {
@@ -255,6 +210,19 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             this->P(19,19) = c_nw;
             this->P(20,20) = c_nw;
         }
+
+        void set_last_R(Eigen::Matrix3d temp_R) {
+        //    Eigen::Vector3d _euler;
+        //    _euler(0) = roll;
+        //    _euler(1) = pitch;
+        //    _euler(2) = yaw;
+        //    get_dcm_from_euler(_R, _euler);
+              _last_update_R = temp_R;
+        }
+        
+        void get_R(Eigen::Matrix3d & temp_R) {
+            temp_R = _R;
+        }
         
         mutable T ax_out;
         mutable T ay_out;
@@ -262,6 +230,9 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
         mutable T wx_out;
         mutable T wy_out;
         mutable T wz_out;
+
+        mutable Eigen::Matrix3d _last_update_R;
+        mutable Eigen::Matrix3d _R;
 
         S f(const S& x, const C& u) const {
             S x_;
@@ -285,21 +256,24 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             T z_new = x.z() + x.vz() * u.dt() + T(1)/T(2) * az * u.dt() *u.dt();
 
             // Kalman::SquareMatrix<T, 3> R_;
-            Eigen::Vector3d e_;
-            e_(0) = x.qx()/T(180)*T(M_PI);
-            e_(1) = x.qy()/T(180)*T(M_PI);
-            e_(2) = x.qz()/T(180)*T(M_PI);
+            // Eigen::Vector3d e_;
+            // e_(0) = x.qx()/T(180)*T(M_PI);
+            // e_(1) = x.qy()/T(180)*T(M_PI);
+            // e_(2) = x.qz()/T(180)*T(M_PI);
             // e_(0) = x.qx();
             // e_(1) = x.qy();
             // e_(2) = x.qz();
-            Eigen::Matrix3d R_;
-            get_dcm_from_euler(R_, e_);
+            // Eigen::Matrix3d R_;
+            // get_dcm_from_euler(R_, e_);
 
 
 
-            T ga_x = R_(0, 0) * ax + R_(0, 1) * ay + R_(0, 2) * az;
-            T ga_y = R_(1, 0) * ax + R_(1, 1) * ay + R_(1, 2) * az;
-            T ga_z = R_(2, 0) * ax + R_(2, 1) * ay + R_(2, 2) * az + T(ONE_G);
+            // T ga_x = R_(0, 0) * ax + R_(0, 1) * ay + R_(0, 2) * az;
+            // T ga_y = R_(1, 0) * ax + R_(1, 1) * ay + R_(1, 2) * az;
+            // T ga_z = R_(2, 0) * ax + R_(2, 1) * ay + R_(2, 2) * az + T(ONE_G);
+            T ga_x = _R(0, 0) * ax + _R(0, 1) * ay + _R(0, 2) * az;
+            T ga_y = _R(1, 0) * ax + _R(1, 1) * ay + _R(1, 2) * az;
+            T ga_z = _R(2, 0) * ax + _R(2, 1) * ay + _R(2, 2) * az + T(ONE_G);
             ax_out = ga_x;
             ay_out = ga_y;
             az_out = ga_z;
@@ -330,21 +304,21 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             wz_out = wz_new;
 
             // Kalman::SquareMatrix<T, 3> R_new;
-            Eigen::Matrix3d R_new;
+            // Eigen::Matrix3d R_new;
             // Eigen::Matrix3d _I;
             // _I.Identity();
-            Eigen::Matrix3d Omega_cha;
-            Omega_cha(0,0) = 1;
-            Omega_cha(1,1) = 1;
-            Omega_cha(2,2) = 1;
-            Omega_cha(0,1) = -wz_new * u.dt();
-            Omega_cha(0,2) = wy_new * u.dt();
-            Omega_cha(1,0) = wz_new * u.dt();
-            Omega_cha(1,2) = -wx_new * u.dt();
-            Omega_cha(2,0) = -wy_new * u.dt();
-            Omega_cha(2,1) = wx_new * u.dt();
+            // Eigen::Matrix3d Omega_cha;
+            // Omega_cha(0,0) = 1;
+            // Omega_cha(1,1) = 1;
+            // Omega_cha(2,2) = 1;
+            // Omega_cha(0,1) = -wz_new * u.dt();
+            // Omega_cha(0,2) = wy_new * u.dt();
+            // Omega_cha(1,0) = wz_new * u.dt();
+            // Omega_cha(1,2) = -wx_new * u.dt();
+            // Omega_cha(2,0) = -wy_new * u.dt();
+            // Omega_cha(2,1) = wx_new * u.dt();
             
-            R_new = R_ * Omega_cha;
+            // R_new = R_ * Omega_cha;
             // std::cout << Omega_cha << std::endl;
             // std::cout << R_new << std::endl;
             // R_new(0,0) = R_(0,0);
@@ -358,20 +332,20 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             // R_new(2,0) = R_(2,0) - u.wy() * u.dt();
             // R_new(2,1) = R_(2,1) + u.wx() * u.dt();
 
-            Kalman::Vector<T, 3> axis_temp;
-            axis_temp(0) = std::sqrt(R_new(0,0)*R_new(0,0) + R_new(1,0)*R_new(1,0) + R_new(2,0)*R_new(2,0));
-            axis_temp(1) = std::sqrt(R_new(0,1)*R_new(0,1) + R_new(1,1)*R_new(1,1) + R_new(2,1)*R_new(2,1));
-            axis_temp(2) = std::sqrt(R_new(0,2)*R_new(0,2) + R_new(1,2)*R_new(1,2) + R_new(2,2)*R_new(2,2));
+            // Kalman::Vector<T, 3> axis_temp;
+            // axis_temp(0) = std::sqrt(R_new(0,0)*R_new(0,0) + R_new(1,0)*R_new(1,0) + R_new(2,0)*R_new(2,0));
+            // axis_temp(1) = std::sqrt(R_new(0,1)*R_new(0,1) + R_new(1,1)*R_new(1,1) + R_new(2,1)*R_new(2,1));
+            // axis_temp(2) = std::sqrt(R_new(0,2)*R_new(0,2) + R_new(1,2)*R_new(1,2) + R_new(2,2)*R_new(2,2));
 
-            for (int i = 0; i < 3 ; i++) {
-                for (int j = 0; j < 3; j++) {
-                    R_new(i,j) = R_new(i,j)/axis_temp(j);
-                }
-            }
+            // for (int i = 0; i < 3 ; i++) {
+            //     for (int j = 0; j < 3; j++) {
+            //         R_new(i,j) = R_new(i,j)/axis_temp(j);
+            //     }
+            // }
 
-            Eigen::Vector3d new_e;
+            // Eigen::Vector3d new_e;
             
-            get_euler_from_R(new_e, R_new);
+            // get_euler_from_R(new_e, R_new);
 
             // Kalman::Vector<T, 4> q_new;
             // T _t = R_new.trace();
@@ -429,9 +403,53 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             // x_.qx() = new_e(0);
             // x_.qy() = new_e(1);
             // x_.qz() = new_e(2);
-            x_.qx() = new_e(0)/T(M_PI)*T(180);//q_new(1);
-            x_.qy() = new_e(1)/T(M_PI)*T(180);//q_new(1);
-            x_.qz() = new_e(2)/T(M_PI)*T(180);//q_new(1);
+            // x_.qx() = new_e(0)/T(M_PI)*T(180);//q_new(1);
+            // x_.qy() = new_e(1)/T(M_PI)*T(180);//q_new(1);
+            // x_.qz() = new_e(2)/T(M_PI)*T(180);//q_new(1);
+            Eigen::Vector3d _temp_dwB;
+            _temp_dwB(0) = wx_new * u.dt();//q_new(1);
+            _temp_dwB(1) = wy_new * u.dt();//q_new(1);
+            _temp_dwB(2) = wz_new * u.dt();//q_new(1);
+            
+            // Eigen::Matrix3d Omega_cha;
+            // Omega_cha(0,0) = 1;
+            // Omega_cha(1,1) = 1;
+            // Omega_cha(2,2) = 1;
+            // Omega_cha(0,1) = -_temp_dwB(2);
+            // Omega_cha(0,2) = _temp_dwB(1);
+            // Omega_cha(1,0) = _temp_dwB(2);
+            // Omega_cha(1,2) = -_temp_dwB(0);
+            // Omega_cha(2,0) = -_temp_dwB(1);
+            // Omega_cha(2,1) = _temp_dwB(0);
+
+            // Eigen::Vector3d _temp_dwW = _R * _temp_dwB;
+            Eigen::Vector3d _temp_dwW = _temp_dwB;
+            x_.qx() = x.qx() + _temp_dwW(0) /T(M_PI)*T(180);
+            x_.qy() = x.qy() + _temp_dwW(1) /T(M_PI)*T(180);
+            x_.qz() = x.qz() + _temp_dwW(2) /T(M_PI)*T(180);
+
+            Eigen::Vector3d _temp_q_rad;
+            _temp_q_rad(0) = x_.qx()/T(180)*T(M_PI);
+            _temp_q_rad(1) = x_.qy()/T(180)*T(M_PI);
+            _temp_q_rad(2) = x_.qz()/T(180)*T(M_PI);
+
+            // _R = _R * Omega_cha;
+            // Eigen::Matrix3d _temp_new_R;
+            get_R_from_R_cha_e(_R, _last_update_R, _temp_q_rad);
+
+
+            Kalman::Vector<T, 3> axis_temp;
+            axis_temp(0) = std::sqrt(_R(0,0)*_R(0,0) + _R(1,0)*_R(1,0) + _R(2,0)*_R(2,0));
+            axis_temp(1) = std::sqrt(_R(0,1)*_R(0,1) + _R(1,1)*_R(1,1) + _R(2,1)*_R(2,1));
+            axis_temp(2) = std::sqrt(_R(0,2)*_R(0,2) + _R(1,2)*_R(1,2) + _R(2,2)*_R(2,2));
+
+            for (int i = 0; i < 3 ; i++) {
+                for (int j = 0; j < 3; j++) {
+                    _R(i,j) = _R(i,j)/axis_temp(j);
+                }
+            }
+
+
             // x_.wx() = u.wx();
             // x_.wy() = u.wy();
             // x_.wz() = u.wz();
