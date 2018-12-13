@@ -126,7 +126,7 @@ class Filter_update_part {
                     // cal dw
                         Eigen::Vector3d temp_dw;
                         get_eR_from_two_R(temp_dw, temp_R, _last_update_R);
-                        std::cout << temp_dw.transpose() << std::endl;
+                        // std::cout << temp_dw.transpose() << std::endl;
                         vio_state.vio_qx() = temp_dw(0)/T(M_PI)*T(180); //TODO
                         vio_state.vio_qy() = temp_dw(1)/T(M_PI)*T(180);
                         vio_state.vio_qz() = temp_dw(2)/T(M_PI)*T(180);
