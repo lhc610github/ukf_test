@@ -100,7 +100,7 @@ class Filter_update_part {
                 get_dcm_from_q(temp_R, vio_q);
                 _sys_R = temp_R;
                 _last_update_R = temp_R;
-                _sys.set_last_R(_last_update_R);
+                _sys.set_last_R(_last_update_R, true);
                 x.qx() = T(0);
                 x.qy() = T(0);
                 x.qz() = T(0);
@@ -141,7 +141,7 @@ class Filter_update_part {
                         // or
                         // _last_update_R = _sys_R;
                         // _sys.set_last_R(_last_update_R);
-                        _sys.set_last_R(_sys_R);
+                        _sys.set_last_R(_sys_R, false);
 
                     _ready_to_update = false;
                     }
@@ -153,7 +153,7 @@ class Filter_update_part {
                     x.z() = msg.pose.pose.position.z;
                     _sys_R = temp_R;
                     _last_update_R = temp_R;
-                    _sys.set_last_R(_last_update_R);
+                    _sys.set_last_R(_last_update_R, true);
                     x.qx() = T(0);//vio_euler(0)/T(M_PI)*T(180);
                     x.qy() = T(0);//vio_euler(1)/T(M_PI)*T(180);
                     x.qz() = T(0);//vio_euler(2)/T(M_PI)*T(180);

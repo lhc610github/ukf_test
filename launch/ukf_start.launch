@@ -12,11 +12,11 @@
         <param name="frame_id" type="string" value="$(arg frame_id)"/>
         <param name="imu_rate" type="int" value="1000" />
         <param name="imu_delay" type="int" value="30" />
-        <param name="predict_rate" type="int" value="100" />
+        <param name="predict_rate" type="int" value="150" />
         <param name="update_part/vio_topic" type="string" value="/fla/vio/odom"/>
-        <param name="update_part/alpha"  value="1.0" />
+        <param name="update_part/alpha"  value="0.5" />
         <param name="update_part/beta"  value="2.0"/>
-        <param name="update_part/kappa"  value="0"/>
+        <param name="update_part/kappa"  value="-12.0"/>
         <param name="update_part/verbose"  value="$(arg verbose)"/>
         <param name="update_part/vm_con_P"  value="0.01"/>
         <param name="update_part/vm_con_V"  value="0.001"/>
@@ -24,9 +24,9 @@
         <param name="update_part/sm_con_P"  value="0.01"/>
         <param name="update_part/sm_con_V"  value="0.001"/>
         <param name="update_part/sm_con_Att"  value="0.1"/>
-        <param name="update_part/sm_con_ba"  value="5e-6"/>
+        <param name="update_part/sm_con_ba"  value="1e-6"/>
         <param name="update_part/sm_con_bw"  value="1e-6"/>
-        <param name="update_part/sm_con_na"  value="2e-6"/>
+        <param name="update_part/sm_con_na"  value="2e-7"/>
         <param name="update_part/sm_con_nw"  value="2e-7"/>
     </node>
 </group>

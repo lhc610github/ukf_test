@@ -155,6 +155,7 @@ namespace Kalman {
             T L = T(State::RowsAtCompileTime);
             lambda = alpha * alpha * ( L + kappa ) - L;
 
+            std::cout << "L:      " << L << std::endl;
             std::cout << "lambda: " << lambda << std::endl;
             gamma = std::sqrt( L + lambda );
             
@@ -167,7 +168,8 @@ namespace Kalman {
             
             T W_m_0 = lambda / ( L + lambda );
             T W_c_0 = W_m_0 + (T(1) - alpha*alpha + beta);
-            T W_i   = T(1) / ( T(2) * alpha*alpha * (L + kappa) );
+            // T W_i   = T(1) / ( T(2) * alpha*alpha * (L + kappa) );
+             T W_i   = T(1) / ( T(2) * alpha*alpha * (L + kappa) );
 
             std::cout << "Wm0: " << W_m_0 << std::endl;
             std::cout << "Wc0: " << W_c_0 << std::endl;

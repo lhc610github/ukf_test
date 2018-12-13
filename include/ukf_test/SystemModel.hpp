@@ -181,6 +181,7 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
 
         SystemModel() {
             _R.setIdentity();
+            _last_update_R.setIdentity();
         }
         
         void set_conv(T c_P, T c_V, T c_Att, T c_ba, T c_bw, T c_na, T c_nw) {
@@ -211,13 +212,15 @@ class SystemModel : public Kalman::SystemModel<State<T>, Control<T>, CovarianceB
             this->P(20,20) = c_nw;
         }
 
-        void set_last_R(Eigen::Matrix3d temp_R) {
+        void set_last_R(Eigen::Matrix3d temp_R, bool set_R_flag) {
         //    Eigen::Vector3d _euler;
         //    _euler(0) = roll;
         //    _euler(1) = pitch;
         //    _euler(2) = yaw;
         //    get_dcm_from_euler(_R, _euler);
               _last_update_R = temp_R;
+              if (set_R_flag)
+                _R = temp_R;
         }
         
         void get_R(Eigen::Matrix3d & temp_R) {

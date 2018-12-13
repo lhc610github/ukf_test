@@ -168,6 +168,7 @@ legend('ukf');
 title('bwz')
 hold off
 
+
 figure(8)
 plot3(real_p.x, real_p.y, real_p.z,'.-');
 hold on
@@ -176,27 +177,27 @@ legend('ukf','vio');
 grid on
 hold off
 
-figure(9)
-subplot(3,1,1)
-plot(t_p, real_p.dwx,'.-');
-hold on
-legend('ukf');
-title('dwx')
-hold off
-subplot(3,1,2)
-plot(t_p, real_p.dwy,'.-');
-hold on
-% plot(t_u, real_u.vy,'.-');
-legend('ukf');
-title('dwy')
-hold off
-subplot(3,1,3)
-plot(t_p, real_p.dwz,'.-');
-hold on
-% plot(t_u, real_u.vz,'.-');
-legend('ukf');
-title('dwz')
-hold off
+% figure(9)
+% subplot(3,1,1)
+% plot(t_p, real_p.dwx,'.-');
+% hold on
+% legend('ukf');
+% title('dwx')
+% hold off
+% subplot(3,1,2)
+% plot(t_p, real_p.dwy,'.-');
+% hold on
+% % plot(t_u, real_u.vy,'.-');
+% legend('ukf');
+% title('dwy')
+% hold off
+% subplot(3,1,3)
+% plot(t_p, real_p.dwz,'.-');
+% hold on
+% % plot(t_u, real_u.vz,'.-');
+% legend('ukf');
+% title('dwz')
+% hold off
 
 % figure(5)
 % subplot(3,1,1)
